@@ -7,7 +7,7 @@ from datetime import datetime as dt
 from jinja2 import Environment
 import dns
 
-app = Flask(__name__, template_folder='app/templates')
+app = Flask(__name__, template_folder='./app/templates', static_folder='./app/static')
 
 # .env necessary to connect to MongoDB
 load_dotenv()
@@ -22,10 +22,12 @@ def connect_mongo():
     db = db_client.safetravels
     return db
 
+
 # Initial route to home
 @app.route('/')
 def hello_flask():
     return "Hello (from Flask)!"
+
 
 # Example of using MongoDB
 @app.route('/mongo')
@@ -36,11 +38,14 @@ def hello_mongo():
     for doc in result:
         return str(doc.get("string"))
 
+
 # Example of templating
 @app.route('/index')
 def index():
     message = "Hello from my template! The time is: " + str(dt.now())
-    return render_template("index.html", message=message)
+    image = url_for('static', filename='images/logo.png')
+    return render_template('index.html', message=message, image=image)
+
 
 # App execution
 if __name__ == '__main__':
