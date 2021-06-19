@@ -1,10 +1,13 @@
-from flask import Flask
+from flask import Flask, redirect, url_for, render_template, request, session, flash, make_response, \
+    render_template_string
 from pymongo import MongoClient
 from os import environ
 from dotenv import load_dotenv
+from datetime import datetime as dt
+from jinja2 import Environment
 import dns
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='app/templates')
 
 # .env necessary to connect to MongoDB
 load_dotenv()
@@ -33,6 +36,11 @@ def hello_mongo():
     for doc in result:
         return str(doc.get("string"))
 
+# Example of templating
+@app.route('/index')
+def index():
+    message = "Hello from my template! The time is: " + str(dt.now())
+    return render_template("index.html", message=message)
 
 # App execution
 if __name__ == '__main__':
