@@ -35,8 +35,9 @@ def hello_flask():
             <h1>Welcome to safetravels!</h1>
             <p>We hope you like the website.</p>
             <p><a href="%s">Go to index template</a></p>
+            <p><a href="%s">Go to mongo example</a></p>
         </body>
-    </html>''' % url_for('index')
+    </html>''' % (url_for('index'), url_for('hello_mongo'))
 
 
 # Example of using MongoDB
