@@ -26,7 +26,17 @@ def connect_mongo():
 # Initial route to home
 @app.route('/')
 def hello_flask():
-    return "Hello (from Flask)!"
+    return '''
+    <html>
+        <head>
+            <title>Hello Flask!</title>
+        </head>
+        <body>
+            <h1>Welcome to safetravels!</h1>
+            <p>We hope you like the website.</p>
+            <p><a href="%s">Go to index template</a></p>
+        </body>
+    </html>''' % url_for('index')
 
 
 # Example of using MongoDB
