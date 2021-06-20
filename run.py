@@ -47,6 +47,6 @@ def index():
     return render_template('index.html', message=message, image=image)
 
 
-# App execution
+# App execution for dev branch
 if __name__ == '__main__':
     app.run(debug=True)
