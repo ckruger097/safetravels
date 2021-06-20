@@ -45,8 +45,3 @@ def index():
     message = "Hello from my template! The time is: " + str(dt.now())
     image = url_for('static', filename='images/logo.png')
     return render_template('index.html', message=message, image=image)
-
-
-# App execution
-if __name__ == '__main__':
-    app.run(debug=True)
