@@ -8,6 +8,7 @@ from jinja2 import Environment
 import dns
 
 app = Flask(__name__, template_folder='./app/templates', static_folder='./app/static')
+app.config['SECRET_KEY'] = 'I figure if I study high, take the test high, get high scores! Right?'
 
 # .env necessary to connect to MongoDB
 load_dotenv()
@@ -26,18 +27,7 @@ def connect_mongo():
 # Initial route to home
 @app.route('/')
 def hello_flask():
-    return '''
-    <html>
-        <head>
-            <title>Hello Flask!</title>
-        </head>
-        <body>
-            <h1>Welcome to safetravels!</h1>
-            <p>We hope you like the website.</p>
-            <p><a href="%s">Go to index template</a></p>
-            <p><a href="%s">Go to mongo example</a></p>
-        </body>
-    </html>''' % (url_for('index'), url_for('hello_mongo'))
+    return render_template('home.html')
 
 
 # Example of using MongoDB
@@ -56,3 +46,13 @@ def index():
     message = "Hello from my template! The time is: " + str(dt.now())
     image = url_for('static', filename='images/logo.png')
     return render_template('index.html', message=message, image=image)
+
+# Search bar page
+@app.route('/search', methods=['GET', 'POST'])
+def search():
+    if request.method == 'POST':
+        state = request.form.get('state')
+
+        if len(state) < 1:
+            flash('Enter a state', category="error")
+    return render_template('search.html')
