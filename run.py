@@ -25,8 +25,12 @@ def connect_mongo():
 
 
 # Initial route to home
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def hello_flask():
+    if request.method == 'POST':
+        text = request.form.get('search')
+        if len(text) < 1:
+            flash('Flash Message Test', category="error")
     return render_template('home.html')
 
 
@@ -46,13 +50,3 @@ def index():
     message = "Hello from my template! The time is: " + str(dt.now())
     image = url_for('static', filename='images/logo.png')
     return render_template('index.html', message=message, image=image)
-
-# Search bar page
-@app.route('/search', methods=['GET', 'POST'])
-def search():
-    if request.method == 'POST':
-        state = request.form.get('state')
-
-        if len(state) < 1:
-            flash('Enter a state', category="error")
-    return render_template('search.html')
