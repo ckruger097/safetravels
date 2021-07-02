@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}{{ in_state }}{% endblock %}
+
+{% block content %}
+<h1>{{ in_state.title() }}-{{ in_abbrev.upper() }} dashboard</h1>
+<table>
+    <tr>
+        {% for header in headings %}
+        <th>{{ header }}</th>
+        {% endfor %}
+    </tr>
+    <tr>
+        <td>{{ in_state.title() }}</td>
+        <td>{{ case_numbers }}</td>
+        <td>{{ deaths }}</td>
+        <td>{{ vaccine }}</td>
+    </tr>
+</table>
+{% endblock %}

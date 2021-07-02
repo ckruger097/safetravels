@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}US{% endblock %}
+
+{% block content %}
+<table>
+    <tr>
+        {% for header in headings %}
+        <th>{{ header }}</th>
+        {% endfor %}
+    </tr>
+    {% for row in output %}
+    <tr>
+        {% for cell in row %}
+        <td>{{ cell }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+
+
+{% endblock %}
