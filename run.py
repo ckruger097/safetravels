@@ -1,6 +1,9 @@
+import json
+
 from flask import Flask, redirect, url_for, render_template, request, session, flash, make_response, \
     render_template_string
-from pymongo import MongoClient
+import pymongo
+from flask_apscheduler import APScheduler
 from os import environ
 from dotenv import load_dotenv
 from datetime import datetime as dt
@@ -10,6 +13,12 @@ import dns, requests
 app = Flask(__name__, template_folder='./app/templates', static_folder='./app/static')
 app.config['SECRET_KEY'] = 'I figure if I study high, take the test high, get high scores! Right?'
 
+# Scheduler
+scheduler = APScheduler()
+scheduler.api_enabled = True
+scheduler.init_app(app)
+scheduler.start()
+
 # .env necessary to connect to MongoDB
 load_dotenv()
 MONGO_USER = environ.get("MONGO_USER")
@@ -18,8 +27,9 @@ MONGO_PASSWORD = environ.get("MONGO_PASSWORD")
 
 # Connect to Mongo. Will likely put in db folder or __init__.py
 def connect_mongo():
-    db_client = MongoClient(f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@cluster0.kxem4.mongodb.net/safetravels"
-                            f"?retryWrites=true&w=majority")
+    db_client = pymongo.MongoClient(
+        f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@cluster0.kxem4.mongodb.net/safetravels"
+        f"?retryWrites=true&w=majority")
     db = db_client.safetravels
     return db
 
@@ -34,14 +44,16 @@ def hello_flask():
     return render_template('home.html')
 
 
-# Example of using MongoDB
+# update API data into MongoDB
+@scheduler.task('interval', id='update_mongo', hours=12, misfire_grace_time=1000)
 @app.route('/mongo')
-def hello_mongo():
+def update_mongo():
     db = connect_mongo()
     collection = db['safetravels-collection']
-    result = collection.find({"string": {"$exists": True}})
-    for doc in result:
-        return str(doc.get("string"))
+    state_list = api_handler()
+    for st in state_list:
+        collection.update({"state": st.get('state')}, {"$set": st})
+    return "Database updated with latest CoVID Act Now data"
 
 
 # Search page, not yet integrated with the JS search bar
@@ -49,11 +61,12 @@ def hello_mongo():
 def search():
     if request.method == "POST":
         req = request.form
-        state = req.get("state").lower()  
+        state = req.get("state").lower()
         if state in us_state_abbrev:
-            abbrev = us_state_abbrev.get(state)      
+            abbrev = us_state_abbrev.get(state)
             return redirect(f"/us/{state}-{abbrev}")
     return render_template("search.html")
+
 
 def api_handler():
     covid_api = 'ad85ef1a0e9b4ad4aecc0ffe0792549e'
@@ -62,39 +75,45 @@ def api_handler():
     state_list = data.json()
     return state_list
 
+
 @app.route("/us")
 def us_page():
-    state_list = api_handler()
     headings = ("State", "Cases", "Deaths", "Vaccinations Completed")
     output = []
 
-    for state in state_list:
-        metrics = (f"{state.get('state')}", f"{state.get('actuals').get('cases')}", f"{state.get('actuals').get('deaths')}",
-        f"{state.get('actuals').get('vaccinationsCompleted')}")
+    db = connect_mongo()
+    collection = db['safetravels-collection']
+    for doc in list(collection.find()):
+        metrics = (
+            f"{doc.get('state')}", f"{doc.get('actuals').get('cases')}", f"{doc.get('actuals').get('deaths')}",
+            f"{doc.get('actuals').get('vaccinationsCompleted')}")
         output.append(metrics)
 
     return render_template("country.html", headings=headings, output=output)
+
 
 @app.route("/us/<state>-<abbrev>")
 def state(state, abbrev):
     in_state = state
     in_abbrev = abbrev
-    
-    
-    states = api_handler()
+
+    db = connect_mongo()
+    collection = db['safetravels-collection']
     abbrev = abbrev.upper()
-    
+
     headings = ("State", "Cases", "Deaths", "Vaccinations")
 
-    for state in states:
-        if state.get('state') == abbrev:
-            case_numbers = state.get('actuals').get('cases')
-            deaths = state.get('actuals').get('deaths')
-            vaccine = state.get('actuals').get('vaccinationsCompleted')
+    for doc in list(collection.find()):
+        if doc.get('state') == abbrev:
+            case_numbers = doc.get('actuals').get('cases')
+            deaths = doc.get('actuals').get('deaths')
+            vaccine = doc.get('actuals').get('vaccinationsCompleted')
             break
 
-    return render_template("state.html", in_state=in_state, in_abbrev=in_abbrev, case_numbers=case_numbers, headings=headings
-    , deaths=deaths, vaccine=vaccine)
+    return render_template("state.html", in_state=in_state, in_abbrev=in_abbrev, case_numbers=case_numbers,
+                           headings=headings
+                           , deaths=deaths, vaccine=vaccine)
+
 
 us_state_abbrev = {
     'alabama': 'al',
@@ -134,7 +153,7 @@ us_state_abbrev = {
     'new york': 'ny',
     'north carolina': 'nc',
     'north dakota': 'nd',
-    'northern mariana islands':'mp',
+    'northern mariana islands': 'mp',
     'ohio': 'oh',
     'oklahoma': 'ok',
     'oregon': 'or',
@@ -155,9 +174,12 @@ us_state_abbrev = {
     'wyoming': 'wy'
 }
 
+
 # Example of templating
 @app.route('/index')
 def index():
     message = "Hello from my template! The time is: " + str(dt.now())
     image = url_for('static', filename='images/logo.png')
     return render_template('index.html', message=message, image=image)
+
+
