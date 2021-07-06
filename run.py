@@ -105,6 +105,16 @@ def state(state, abbrev):
 
     headings = ("State", "Cases", "Deaths", "Vaccinations")
 
+    vaccine_list = vaccineAdminMetrics(abbrev)
+    dates = []
+    vaccine_metrics = []
+    infection_rate = []
+
+    for i in range(len(vaccine_list)):
+        dates.append(vaccine_list[i][0])
+        vaccine_metrics.append(vaccine_list[i][1])
+        infection_rate.append(vaccine_list[i][2])
+
     for doc in list(collection.find()):
         if doc.get('state') == abbrev:
             case_numbers = doc.get('actuals').get('cases')
@@ -113,8 +123,8 @@ def state(state, abbrev):
             break
 
     return render_template("state.html", in_state=in_state, in_abbrev=in_abbrev, case_numbers=case_numbers,
-                           headings=headings
-                           , deaths=deaths, vaccine=vaccine)
+                           headings=headings, deaths=deaths, vaccine=vaccine, dates=dates, vaccine_metrics=vaccine_metrics
+                           , infection_rate=infection_rate)
 
 
 us_state_abbrev = {
@@ -176,32 +186,20 @@ us_state_abbrev = {
     'wyoming': 'wy'
 }
 
-@app.route('/graph')
-def graph():
-
-    vaccine_list = vaccineAdminMetrics()
-    dates = []
-    vaccine_metrics = []
-
-    for i in range(len(vaccine_list)):
-        dates.append(vaccine_list[i][0])
-        vaccine_metrics.append(vaccine_list[i][1])
-
-    return render_template("graph.html", dates=dates, vaccine_metrics=vaccine_metrics)
-
-def vaccineAdminMetrics():
+def vaccineAdminMetrics(state_abb):
     db = connect_mongo()
     collection = db['safetravels-collection']
     
     vaccine_list = []
 
     for doc in list(collection.find()):
-        if doc.get('state') == "AK":
+        if doc.get('state') == state_abb:
             metric = doc.get('metricsTimeseries')
             for i in range(len(metric)):
                 if metric[i].get('date') >= "2020-14-12":
                     if metric[i].get('vaccinationsCompletedRatio'):
-                        line = (f"{metric[i].get('date')}", f"{metric[i].get('vaccinationsCompletedRatio')}")
+                        line = (f"{metric[i].get('date')}", f"{metric[i].get('vaccinationsCompletedRatio')}",
+                        f"{metric[i].get('infectionRate')}")
                         vaccine_list.append(line)
             break
     return vaccine_list
