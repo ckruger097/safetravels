@@ -53,6 +53,7 @@ def update_mongo():
     state_list = api_handler()
     for st in state_list:
         collection.update({"state": st.get('state')}, {"$set": st})
+    
     return "Database updated with latest CoVID Act Now data"
 
 
@@ -70,7 +71,7 @@ def search():
 
 def api_handler():
     covid_api = 'ad85ef1a0e9b4ad4aecc0ffe0792549e'
-    url = 'https://api.covidactnow.org/v2/states.json?apiKey=' + covid_api
+    url = 'https://api.covidactnow.org/v2/states.timeseries.json?apiKey=' + covid_api
     data = requests.get(url)
     state_list = data.json()
     return state_list
@@ -83,6 +84,7 @@ def us_page():
 
     db = connect_mongo()
     collection = db['safetravels-collection']
+    
     for doc in list(collection.find()):
         metrics = (
             f"{doc.get('state')}", f"{doc.get('actuals').get('cases')}", f"{doc.get('actuals').get('deaths')}",
@@ -173,6 +175,37 @@ us_state_abbrev = {
     'wisconsin': 'wi',
     'wyoming': 'wy'
 }
+
+@app.route('/graph')
+def graph():
+
+    vaccine_list = vaccineAdminMetrics()
+    dates = []
+    vaccine_metrics = []
+
+    for i in range(len(vaccine_list)):
+        dates.append(vaccine_list[i][0])
+        vaccine_metrics.append(vaccine_list[i][1])
+
+    return render_template("graph.html", dates=dates, vaccine_metrics=vaccine_metrics)
+
+def vaccineAdminMetrics():
+    db = connect_mongo()
+    collection = db['safetravels-collection']
+    
+    vaccine_list = []
+
+    for doc in list(collection.find()):
+        if doc.get('state') == "AK":
+            metric = doc.get('metricsTimeseries')
+            for i in range(len(metric)):
+                if metric[i].get('date') >= "2020-14-12":
+                    if metric[i].get('vaccinationsCompletedRatio'):
+                        line = (f"{metric[i].get('date')}", f"{metric[i].get('vaccinationsCompletedRatio')}")
+                        vaccine_list.append(line)
+            break
+    return vaccine_list
+
 
 
 # Example of templating
