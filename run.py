@@ -8,7 +8,7 @@ from os import environ
 from dotenv import load_dotenv
 from datetime import datetime as dt
 from jinja2 import Environment
-import dns, requests
+import dns, requests, pycurl
 
 app = Flask(__name__, template_folder='./app/templates', static_folder='./app/static')
 app.config['SECRET_KEY'] = 'I figure if I study high, take the test high, get high scores! Right?'
@@ -214,3 +214,6 @@ def index():
     return render_template('index.html', message=message, image=image)
 
 
+@app.route('/flightAwareAPI')
+def flightAwareAPI():
+    return None
