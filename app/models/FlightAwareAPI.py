@@ -1,16 +1,10 @@
-import pycurl
-from io import BytesIO
+import requests
 
 def getResult(url,question=''): # Get Result is used in every function below, link with URL to get API information and output
-    b_obj = BytesIO()
-    crl = pycurl.Curl()
-    crl.setopt(crl.URL, url)
-    crl.setopt(crl.WRITEDATA, b_obj)
-    crl.perform()
-    crl.close()
-    get_body = b_obj.getvalue()
+    r = requests.get(url)
+    r = r.json()
 
-    print('Output of GET %s request:\n%s' %(question, get_body.decode('utf8'))) # get_body.decode('utf8') stores the API information
+    print('Output of GET %s request:\n%s' %(question, r)) # r stores the API information
 
 def FlightInfoEx(ident,howMany=1,offset=0):
     question = 'FlightInfoEx?'
@@ -52,7 +46,7 @@ def Arrived(airport, howMany=1, filter='', offset=0):
     getResult(url,question)
 
 # Example:
-# Arrived('KIAD',5)
+Arrived('KIAD',5)
 Arrived('KIAD',5,'airline',0)
 
 
