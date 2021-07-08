@@ -3,19 +3,6 @@
 {% block title %}{{ in_state }}{% endblock %}
 
 {% block content %}
-    <table>
-        <tr>
-            {% for header in headings %}
-            <th>{{ header }}</th>
-            {% endfor %}
-        </tr>
-        <tr>
-            <td>{{ in_state.title() }}</td>
-            <td>{{ case_numbers }}</td>
-            <td>{{ deaths }}</td>
-            <td>{{ vaccine }}</td>
-        </tr>
-    </table>
 <div class="dashboard">  
     <div class="dashboard-header">
         <p>{{ in_state.title() }}</p>
@@ -29,6 +16,28 @@
         <div class="card" id="card-2">
             <div class="chart-canvas">
                 <canvas id="lineChart2"></canvas>
+            </div>
+        </div>
+        <div class="card" id="card-3">
+            <div class="chart-canvas">
+                <table class="tabular">
+                    <tr>
+                        {% for header in headings %}
+                        <th>{{ header }}</th>
+                        {% endfor %}
+                    </tr>
+                    <tr>
+                        <td>{{ in_state.title() }}</td>
+                        <td>{{ case_numbers }}</td>
+                        <td>{{ deaths }}</td>
+                        <td>{{ vaccine }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="card" id="card-4">
+            <div class="chart-canvas">
+                
             </div>
         </div>
     </div>

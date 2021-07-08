@@ -33,12 +33,18 @@
     height: auto;
 }
 
-table, th, td {
-    border: 1px solid black;
-    width: 25%;
+table {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    -ms-transform: translate(-50%,-50%);
+    transform: translate(-50%,-50%);
 }
 
 th, td {
+    border: 1px solid black;
+    width: 25%;
     text-align: center;
     background-color: thistle;
 }
@@ -57,7 +63,7 @@ th, td {
 .dashboard-header {
     overflow: auto;
     margin-left: var(--dashboard-margin);    
-    margin-top: -50px;
+    margin-top: 0px;
     font-size: var(--font-size-large);
     display: flex;
     align-items: center;

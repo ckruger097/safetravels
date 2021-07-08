@@ -28,27 +28,24 @@
 
         <title>{% block title %}{% endblock %}</title>
     </head>
-    <body>
-        <header>
-            <nav class="navbar navbar-expand-md navbar-dark bg-dark">
-                <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='images/logo.png') }}" alt=""></a>
-                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
-                  <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav mr-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/us">United States</a>
-                        </li>
-                    </ul>
-                    <form class="d-flex" action="/" method="POST">
-                        <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" type="state" name="state">
-                        <button class="btn btn-outline-success" type="submit">Search</button>
-                      </form>
-                </div>
-            </nav>  
-        </header>
-        
+    <body> 
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+            <a class="navbar-brand" href="/"><img src="{{ url_for('static', filename='images/logo.png') }}" alt=""></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mr-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/us">United States</a>
+                    </li>
+                </ul>
+                <form class="d-flex" action="/" method="POST">
+                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" type="state" name="state">
+                    <button class="btn btn-outline-success" type="submit">Search</button>
+                    </form>
+            </div>
+        </nav>     
         <!--<style>
             body {
                 background-image: url('http://wallpaperheart.com/wp-content/uploads/2018/04/cool-4k-wallpapers-3.jpg');
