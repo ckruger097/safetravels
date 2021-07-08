@@ -1,16 +1,4 @@
 {% extends "base.html" %}{% block title %}Safe Travels{% endblock %}
 {% block content %}
-<link rel="stylesheet" href="{{ url_for('static', filename='css/style_sheet.css') }}">
 
-    <div class="container">
-        <div class="icon">
-            <i class="search fa fa-search"></i>
-        </div>
-        <div class="input">
-            <input placeholder="search" class="form-control" type="text" autocomplete="off" name="search" id="search"/>
-            <i class="clear fa fa-times"></i>
-        </div>
-    </div>
-
-    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
 {% endblock %}

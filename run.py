@@ -8,7 +8,7 @@ from os import environ
 from dotenv import load_dotenv
 from datetime import datetime as dt
 from jinja2 import Environment
-import dns, requests, pycurl
+import dns, requests
 
 app = Flask(__name__, template_folder='./app/templates', static_folder='./app/static')
 app.config['SECRET_KEY'] = 'I figure if I study high, take the test high, get high scores! Right?'
@@ -38,9 +38,11 @@ def connect_mongo():
 @app.route('/', methods=['GET', 'POST'])
 def hello_flask():
     if request.method == 'POST':
-        text = request.form.get('search')
-        if len(text) < 1:
-            flash('Flash Message Test', category="error")
+        req = request.form
+        state = req.get("state").lower()
+        if state in us_state_abbrev:
+            abbrev = us_state_abbrev.get(state)
+            return redirect(f"/us/{state}-{abbrev}")
     return render_template('home.html')
 
 
@@ -209,9 +211,7 @@ def vaccineAdminMetrics(state_abb):
 # Example of templating
 @app.route('/index')
 def index():
-    message = "Hello from my template! The time is: " + str(dt.now())
-    image = url_for('static', filename='images/logo.png')
-    return render_template('index.html', message=message, image=image)
+    return render_template("index.html")
 
 
 @app.route('/flightAwareAPI')
