@@ -1,14 +1,35 @@
-.lineChart1 {
-    border: 1px solid black;
-    background-color: rgb(177, 184, 182);
-    width: 100%;
-    height: auto;
+:root {
+    /* Color Theming */
+    --first-bg-color:  #252f3b; 
+    --second-bg-color: #1B2533;
+    --first-font-color: white;
+    --second-font-color: #21cd92; 
+    --overall-top-margin: 30px;
+    --dashboard-margin: 40px;
+    --nav-side-bar-margin-left: 20px;     
+    --border-radius: 10px;
+    --font-size-xs: 16px;
+    --font-size-medium: 28px;
+    --font-size-large: 48px;
+  }
+
+* {
+    font-family: 'Roboto', sans-serif;
 }
 
-.lineChart2 {
-    border: 1px solid black;
-    background-color: rgb(177, 184, 182);
-    width: 100%;
+.header {
+    display: grid;
+    grid-template-rows: 2fr 10fr;
+    flex-direction: row;
+}
+
+@media only screen and (max-width: 1200px) {
+    .header {
+        grid-template-columns: 2fr 6fr;
+    }
+}
+
+.main {
     height: auto;
 }
 
@@ -22,11 +43,55 @@ th, td {
     background-color: thistle;
 }
 
-.container_graph {
-    border: 1px solid black;
-    grid-template-columns: 1fr 1fr;
-}
-
 .navbar-brand img {
     height: 60px;
+}
+
+.dashboard {
+    color: var(--first-font-color);
+    height: 90%;
+    background-color: var(--first-bg-color);
+    border-bottom-right-radius: var(--border-radius);
+}
+
+.dashboard-header {
+    overflow: auto;
+    margin-left: var(--dashboard-margin);    
+    margin-top: -50px;
+    font-size: var(--font-size-large);
+    display: flex;
+    align-items: center;
+}
+
+.dashboard-card {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    margin: 0 var(--dashboard-margin);
+    padding-bottom: 50px;
+    gap: 50px;
+}
+
+@media only screen and (max-width: 1200px) {
+    .dashboard-card{
+        grid-template-columns: 1fr;
+    }
+}
+
+.card {
+    width: 100%;   
+    border-radius: 10px;
+    box-shadow:  10px 10px 10px #151d28;
+    background-color: var(--second-bg-color);
+}
+
+.chart-canvas {
+    margin: 20px;
+    position: relative;
+    min-height: 250px;
+}
+
+.chart-options {
+    position: absolute;
+    right: 30px;
+    top: 14px;
 }

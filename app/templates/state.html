@@ -3,25 +3,35 @@
 {% block title %}{{ in_state }}{% endblock %}
 
 {% block content %}
-<h1>{{ in_state.title() }}-{{ in_abbrev.upper() }} dashboard</h1>
-<table>
-    <tr>
-        {% for header in headings %}
-        <th>{{ header }}</th>
-        {% endfor %}
-    </tr>
-    <tr>
-        <td>{{ in_state.title() }}</td>
-        <td>{{ case_numbers }}</td>
-        <td>{{ deaths }}</td>
-        <td>{{ vaccine }}</td>
-    </tr>
-</table>
-<div class="chartBox1">
-    <canvas id="lineChart1" width="900" height="400"></canvas>
-</div>
-<div class="chartBox2">
-    <canvas id="lineChart2" width="900" height="400"></canvas>
+    <table>
+        <tr>
+            {% for header in headings %}
+            <th>{{ header }}</th>
+            {% endfor %}
+        </tr>
+        <tr>
+            <td>{{ in_state.title() }}</td>
+            <td>{{ case_numbers }}</td>
+            <td>{{ deaths }}</td>
+            <td>{{ vaccine }}</td>
+        </tr>
+    </table>
+<div class="dashboard">  
+    <div class="dashboard-header">
+        <p>{{ in_state.title() }}</p>
+    </div>
+    <div class="dashboard-card">
+        <div class="card" id="card-1">
+            <div class="chart-canvas">
+                <canvas id="lineChart1"></canvas>
+            </div>
+        </div>
+        <div class="card" id="card-2">
+            <div class="chart-canvas">
+                <canvas id="lineChart2"></canvas>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -41,7 +51,7 @@
             ]
         },
         options: {
-            responsive: false
+            responsive: true
         }
     });
 
@@ -61,7 +71,7 @@
                 ]
             },
             options: {
-                responsive: false
+                responsive: true
             }
         });
 </script>
