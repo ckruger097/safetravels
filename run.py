@@ -1,7 +1,9 @@
 import json
+from re import L
 
 from flask import Flask, redirect, url_for, render_template, request, session, flash, make_response, \
     render_template_string
+from decimal import Decimal
 import pymongo
 from flask_apscheduler import APScheduler
 from os import environ
@@ -79,22 +81,43 @@ def api_handler():
     return state_list
 
 
-@app.route("/us")
+@app.route("/compare", methods=["GET", "POST"])
 def us_page():
-    headings = ("State", "Cases", "Deaths", "Vaccinations Completed")
-    output = []
+    flag = 0
+    if request.method == "POST":
+        req = request.form
+        state1 = req.get("state1").lower()
+        state2 = req.get("state2").lower()
+        if state1 in us_state_abbrev:
+            flag = flag + 1
+        if state2 in us_state_abbrev:
+            if flag == 1:
+                return redirect(f"/compare/{state1}-{state2}") 
+    return render_template("compare.html")
 
-    db = connect_mongo()
-    collection = db['safetravels-collection']
+@app.route("/compare/<state1>-<state2>")
+def compare2(state1, state2):
+
+    abbrev1 = us_state_abbrev.get(state1).upper()
+    abbrev2 = us_state_abbrev.get(state2).upper()
+
+    headings = ("State", "Cases", "Deaths", "Vaccinations")
     
-    for doc in list(collection.find()):
-        metrics = (
-            f"{doc.get('state')}", f"{doc.get('actuals').get('cases')}", f"{doc.get('actuals').get('deaths')}",
-            f"{doc.get('actuals').get('vaccinationsCompleted')}")
-        output.append(metrics)
+    vaccine_list1 = vaccineAdminMetrics(abbrev1)
+    vaccine_list2 = vaccineAdminMetrics(abbrev2)
+    dates1 = []
+    dates2 = []
+    infection_rate1 = []
+    infection_rate2 = []
 
-    return render_template("country.html", headings=headings, output=output)
-
+    for i in range(len(vaccine_list1)):
+        dates1.append(vaccine_list1[i][0])
+        infection_rate1.append(vaccine_list1[i][2])
+    for i in range(len(vaccine_list2)):
+        dates2.append(vaccine_list2[i][0])
+        infection_rate2.append(vaccine_list2[i][2])
+    return render_template("results.html", headings=headings, dates1=dates1, dates2=dates2, 
+        infection_rate1=infection_rate1, infection_rate2=infection_rate2, state1=state1, state2=state2)
 
 @app.route("/us/<state>-<abbrev>")
 def state(state, abbrev):
@@ -124,9 +147,17 @@ def state(state, abbrev):
             vaccine = doc.get('actuals').get('vaccinationsCompleted')
             break
 
-    return render_template("state.html", in_state=in_state, in_abbrev=in_abbrev, case_numbers=case_numbers,
-                           headings=headings, deaths=deaths, vaccine=vaccine, dates=dates, vaccine_metrics=vaccine_metrics
-                           , infection_rate=infection_rate)
+    return render_template("state.html", 
+        in_state=in_state, 
+        in_abbrev=in_abbrev, 
+        case_numbers=case_numbers,
+        headings=headings, 
+        deaths=deaths, 
+        vaccine=vaccine, 
+        dates=json.dumps(dates), 
+        vaccine_metrics=json.dumps(vaccine_metrics), 
+        infection_rate=json.dumps(infection_rate)
+        )
 
 
 us_state_abbrev = {
@@ -200,18 +231,13 @@ def vaccineAdminMetrics(state_abb):
             for i in range(len(metric)):
                 if metric[i].get('date') >= "2020-14-12":
                     if metric[i].get('vaccinationsCompletedRatio'):
-                        line = (f"{metric[i].get('date')}", f"{metric[i].get('vaccinationsCompletedRatio')}",
+                        num = Decimal(metric[i].get('vaccinationsCompletedRatio'))
+                        num = num * 100
+                        line = (f"{metric[i].get('date')}", f"{str(num)}",
                         f"{metric[i].get('infectionRate')}")
                         vaccine_list.append(line)
             break
     return vaccine_list
-
-
-
-# Example of templating
-@app.route('/index')
-def index():
-    return render_template("index.html")
 
 
 @app.route('/flightAwareAPI')

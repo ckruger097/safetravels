@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Results{% endblock %}
+
+{% block content %}
+
+<div class="dashboard">  
+    <div class="dashboard-header">
+        <p>{{ state1.title() }} and {{ state2.title() }}</p>
+    </div>
+    <div class="dashboard-card">
+        <div class="card" id="card-1">
+            <div class="chart-canvas">
+                <canvas id="lineChart1"></canvas>
+            </div>
+        </div>
+        <div class="card" id="card-2">
+            <div class="chart-canvas">
+                <canvas id="lineChart2"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx1 = document.getElementById("lineChart1").getContext("2d")
+    const lineChart1 = new Chart(ctx1, {
+        type: "line",
+        data: {
+            labels: {{ dates1|safe }},
+            datasets: [
+                {
+                    label: "{{ state1.title() }} Infection Rate",
+                    data: {{ infection_rate1|safe }},
+                    fill: false,
+                    borderColor: "rgb(255, 128, 0)",
+                    lineTension: 0.3
+                }
+            ]
+        }
+    });
+
+    const ctx2 = document.getElementById("lineChart2").getContext("2d")
+    const lineChart2 = new Chart(ctx2, {
+        type: "line",
+        data: {
+            labels: {{ dates2|safe }},
+            datasets: [
+                {
+                    label: "{{ state2.title() }} Infection Rate",
+                    data: {{ infection_rate2|safe }},
+                    fill: false,
+                    borderColor: "rgb(255, 128, 0)",
+                    lineTension: 0.3
+                }
+            ]
+        }
+    });
+</script>
+
+{% endblock %}

@@ -101,3 +101,53 @@ th, td {
     right: 30px;
     top: 14px;
 }
+
+.search-bar {
+    height: 100vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+}
+
+.head1 {
+    color:rgb(212, 224, 224);
+    margin-bottom: 70px;
+    font-size: 45px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.search-field {
+    height: 50px;
+    padding: 10px;
+    border-radius: 25px;
+}
+
+.state1 {
+    width: 400px;
+}
+
+.state2 {
+    width: 400px;
+}
+
+.search-btn {
+    height: 50px;
+    width: 150px;
+    background: #ffeb3b;
+    color: #000;
+    border-radius: 25px;
+}
+
+.search-btn:hover {
+    background:#ffc107;
+    cursor: pointer;
+}
+
+.form-box {
+    background: rbga(0,0,0,0.5);
+    padding: 30px;
+}

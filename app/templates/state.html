@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 
-{% block title %}{{ in_state }}{% endblock %}
+{% block title %}{{ in_state.capitalize() }}{% endblock %}
 
 {% block content %}
 <div class="dashboard">  
@@ -37,50 +37,50 @@
         </div>
         <div class="card" id="card-4">
             <div class="chart-canvas">
-                
+
             </div>
         </div>
     </div>
 </div>
 
 <script>
-    const ctx1 = document.getElementById("lineChart1");
+    let vaccineMetrics = JSON.parse({{ vaccine_metrics | tojson }});
+    let graph_dates = JSON.parse({{ dates | tojson }});
+    let infections = JSON.parse({{ infection_rate | tojson }});
+    const ctx1 = document.getElementById("lineChart1").getContext("2d");
     const lineChart1 = new Chart(ctx1, {
         type: "line",
         data: {
-            labels: {{ dates|safe }},
+            labels: graph_dates,
             datasets: [
                 {
-                    label: "Fully Vaccinated",
-                    data: {{ vaccine_metrics|safe }},
+                    label: "% Fully Vaccinated",
+                    data: vaccineMetrics,
                     fill: false,
                     borderColor: "rgb(211, 42, 153)",
                     lineTension: 0.3
+                },
+                {
+                    label: "Another data set"
                 }
             ]
         },
-        options: {
-            responsive: true
-        }
     });
 
-    const ctx2 = document.getElementById("lineChart2");
+    const ctx2 = document.getElementById("lineChart2").getContext("2d");
         const lineChart2 = new Chart(ctx2, {
             type: "line",
             data: {
-                labels: {{ dates|safe }},
+                labels: graph_dates,
                 datasets: [
                     {
                         label: "Infection Rate",
-                        data: {{ infection_rate|safe }},
+                        data: infections,
                         fill: false,
                         borderColor: "rgb(211, 42, 153)",
                         lineTension: 0.3
                     }
                 ]
-            },
-            options: {
-                responsive: true
             }
         });
 </script>
