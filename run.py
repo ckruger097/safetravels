@@ -97,11 +97,14 @@ def us_page():
 
 @app.route("/compare/<state1>-<state2>")
 def compare2(state1, state2):
+    db = connect_mongo()
+    collection = db['safetravels-collection']
+
+    headings = [state1, state2]
 
     abbrev1 = us_state_abbrev.get(state1).upper()
     abbrev2 = us_state_abbrev.get(state2).upper()
 
-    headings = ("State", "Cases", "Deaths", "Vaccinations")
     
     vaccine_list1 = vaccineAdminMetrics(abbrev1)
     vaccine_list2 = vaccineAdminMetrics(abbrev2)
@@ -109,15 +112,42 @@ def compare2(state1, state2):
     dates2 = []
     infection_rate1 = []
     infection_rate2 = []
+    vaccine_metrics1 = []
+    vaccine_metrics2 = []
 
     for i in range(len(vaccine_list1)):
         dates1.append(vaccine_list1[i][0])
+        vaccine_metrics1.append(vaccine_list1[i][1])
         infection_rate1.append(vaccine_list1[i][2])
     for i in range(len(vaccine_list2)):
         dates2.append(vaccine_list2[i][0])
+        vaccine_metrics2.append(vaccine_list2[i][1])
         infection_rate2.append(vaccine_list2[i][2])
-    return render_template("results.html", headings=headings, dates1=dates1, dates2=dates2, 
-        infection_rate1=infection_rate1, infection_rate2=infection_rate2, state1=state1, state2=state2)
+    for doc in list(collection.find()):
+        if doc.get('state') == abbrev1:
+            deaths1 = doc.get('actuals').get('deaths')
+            break
+    for doc in list(collection.find()):
+        if doc.get('state') == abbrev2:
+            deaths2 = doc.get('actuals').get('deaths')
+            break
+
+    print(deaths1)
+    print(deaths2)
+    
+    return render_template("results.html",  
+        headings=headings,
+        dates1=dates1, 
+        dates2=dates2, 
+        vaccine_metrics1=vaccine_metrics1,
+        vaccine_metrics2=vaccine_metrics2,
+        infection_rate1=infection_rate1, 
+        infection_rate2=infection_rate2, 
+        state1=state1, 
+        state2=state2,
+        deaths1=deaths1,
+        deaths2=deaths2,
+        )
 
 @app.route("/us/<state>-<abbrev>")
 def state(state, abbrev):
