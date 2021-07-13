@@ -30,8 +30,7 @@ MONGO_PASSWORD = environ.get("MONGO_PASSWORD")
 # Connect to Mongo. Will likely put in db folder or __init__.py
 def connect_mongo():
     db_client = pymongo.MongoClient(
-        f"mongodb+srv://{MONGO_USER}:{MONGO_PASSWORD}@cluster0.kxem4.mongodb.net/safetravels"
-        f"?retryWrites=true&w=majority")
+        f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@cluster0-shard-00-00.kxem4.mongodb.net:27017,cluster0-shard-00-01.kxem4.mongodb.net:27017,cluster0-shard-00-02.kxem4.mongodb.net:27017/safetravels?ssl=true&replicaSet=atlas-5u7slz-shard-0&authSource=admin&retryWrites=true&w=majority")
     db = db_client.safetravels
     return db
 
@@ -53,11 +52,8 @@ def hello_flask():
 @app.route('/mongo')
 def update_mongo():
     db = connect_mongo()
-    collection = db['safetravels-collection']
+    collection = db['new-state-list']
     state_list = api_handler()
-    for st in state_list:
-        collection.update({"state": st.get('state')}, {"$set": st})
-    
     return "Database updated with latest CoVID Act Now data"
 
 
@@ -78,6 +74,7 @@ def api_handler():
     url = 'https://api.covidactnow.org/v2/states.timeseries.json?apiKey=' + covid_api
     data = requests.get(url)
     state_list = data.json()
+    print(state_list)
     return state_list
 
 
@@ -92,20 +89,20 @@ def us_page():
             flag = flag + 1
         if state2 in us_state_abbrev:
             if flag == 1:
-                return redirect(f"/compare/{state1}-{state2}") 
+                return redirect(f"/compare/{state1}-{state2}")
     return render_template("compare.html")
 
 @app.route("/compare/<state1>-<state2>")
 def compare2(state1, state2):
     db = connect_mongo()
-    collection = db['safetravels-collection']
+    collection = db['new-state-list']
 
     headings = [state1, state2]
 
     abbrev1 = us_state_abbrev.get(state1).upper()
     abbrev2 = us_state_abbrev.get(state2).upper()
 
-    
+
     vaccine_list1 = vaccineAdminMetrics(abbrev1)
     vaccine_list2 = vaccineAdminMetrics(abbrev2)
     dates1 = []
@@ -134,16 +131,16 @@ def compare2(state1, state2):
 
     print(deaths1)
     print(deaths2)
-    
-    return render_template("results.html",  
+
+    return render_template("results.html",
         headings=headings,
-        dates1=dates1, 
-        dates2=dates2, 
+        dates1=dates1,
+        dates2=dates2,
         vaccine_metrics1=vaccine_metrics1,
         vaccine_metrics2=vaccine_metrics2,
-        infection_rate1=infection_rate1, 
-        infection_rate2=infection_rate2, 
-        state1=state1, 
+        infection_rate1=infection_rate1,
+        infection_rate2=infection_rate2,
+        state1=state1,
         state2=state2,
         deaths1=deaths1,
         deaths2=deaths2,
@@ -155,7 +152,7 @@ def state(state, abbrev):
     in_abbrev = abbrev
 
     db = connect_mongo()
-    collection = db['safetravels-collection']
+    collection = db['new-state-list']
     abbrev = abbrev.upper()
 
     headings = ("State", "Cases", "Deaths", "Vaccinations")
@@ -177,15 +174,15 @@ def state(state, abbrev):
             vaccine = doc.get('actuals').get('vaccinationsCompleted')
             break
 
-    return render_template("state.html", 
-        in_state=in_state, 
-        in_abbrev=in_abbrev, 
+    return render_template("state.html",
+        in_state=in_state,
+        in_abbrev=in_abbrev,
         case_numbers=case_numbers,
-        headings=headings, 
-        deaths=deaths, 
-        vaccine=vaccine, 
-        dates=json.dumps(dates), 
-        vaccine_metrics=json.dumps(vaccine_metrics), 
+        headings=headings,
+        deaths=deaths,
+        vaccine=vaccine,
+        dates=json.dumps(dates),
+        vaccine_metrics=json.dumps(vaccine_metrics),
         infection_rate=json.dumps(infection_rate)
         )
 
@@ -251,8 +248,8 @@ us_state_abbrev = {
 
 def vaccineAdminMetrics(state_abb):
     db = connect_mongo()
-    collection = db['safetravels-collection']
-    
+    collection = db['new-state-list']
+
     vaccine_list = []
 
     for doc in list(collection.find()):
@@ -273,3 +270,7 @@ def vaccineAdminMetrics(state_abb):
 @app.route('/flightAwareAPI')
 def flightAwareAPI():
     return None
+
+# App execution for dev branch
+if __name__ == '__main__':
+    app.run(debug=True)
