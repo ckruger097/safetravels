@@ -11,6 +11,7 @@ from dotenv import load_dotenv
 from datetime import datetime as dt
 from jinja2 import Environment
 import dns, requests
+from datetime import timedelta, datetime
 
 app = Flask(__name__, template_folder='./app/templates', static_folder='./app/static')
 app.config['SECRET_KEY'] = 'I figure if I study high, take the test high, get high scores! Right?'
