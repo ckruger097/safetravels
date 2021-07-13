@@ -75,7 +75,6 @@ def api_handler():
     url = 'https://api.covidactnow.org/v2/states.timeseries.json?apiKey=' + covid_api
     data = requests.get(url)
     state_list = data.json()
-    print(state_list)
     return state_list
 
 
@@ -271,7 +270,3 @@ def vaccineAdminMetrics(state_abb):
 @app.route('/flightAwareAPI')
 def flightAwareAPI():
     return None
-
-# App execution for dev branch
-if __name__ == '__main__':
-    app.run(debug=True)
