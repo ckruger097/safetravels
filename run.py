@@ -3,6 +3,7 @@ from re import L
 
 from flask import Flask, redirect, url_for, render_template, request, session, flash, make_response, \
     render_template_string
+from flask import send_from_directory
 from decimal import Decimal
 import pymongo
 from flask_apscheduler import APScheduler
@@ -12,6 +13,7 @@ from datetime import datetime as dt
 from jinja2 import Environment
 import dns, requests
 from datetime import timedelta, datetime
+from app.models.FlightAwareAPI import mainFunction
 
 app = Flask(__name__, template_folder='./app/templates', static_folder='./app/static')
 app.config['SECRET_KEY'] = 'I figure if I study high, take the test high, get high scores! Right?'
@@ -268,9 +270,166 @@ def vaccineAdminMetrics(state_abb):
     return vaccine_list
 
 
-@app.route('/flightAwareAPI')
-def flightAwareAPI():
-    return None
+us_state_primaryAirport_stateNum = {
+    'state': 'state number',
+    'alabama': 0,
+    'alaska': 1,
+    'american samoa': 2,
+    'arizona': 3,
+    'arkansas': 4,
+    'california': 5,
+    'colorado': 6,
+    'connecticut': 7,
+    'delaware': 8,
+    'district of columbia': 9,
+    'florida': 10,
+    'georgia': 11,
+    'guam': 12,
+    'hawaii': 13,
+    'idaho': 14,
+    'illinois': 15,
+    'indiana': 16,
+    'iowa': 17,
+    'kansas': 18,
+    'kentucky': 19,
+    'louisiana': 20,
+    'maine': 21,
+    'maryland': 22,
+    'massachusetts': 23,
+    'michigan': 24,
+    'minnesota': 25,
+    'mississippi': 26,
+    'missouri': 27,
+    'montana': 28,
+    'nebraska': 29,
+    'nevada': 30,
+    'new hampshire': 31,
+    'new jersey': 32,
+    'new mexico': 33,
+    'new york': 34,
+    'north carolina': 35,
+    'north dakota': 36,
+    'northern mariana islands': 37,
+    'ohio': 38,
+    'oklahoma': 39,
+    'oregon': 40,
+    'pennsylvania': 41,
+    'puerto rico': 42,
+    'rhode island': 43,
+    'south carolina': 44,
+    'south dakota': 45,
+    'tennessee': 46,
+    'texas': 47,
+    'utah': 48,
+    'vermont': 49,
+    'virgin islands': 50,
+    'virginia': 51,
+    'washington': 52,
+    'west virginia': 53,
+    'wisconsin': 54,
+    'wyoming': 55,
+}
+
+key =[
+    'alabama',
+    'alaska',
+    'american samoa',
+    'arizona',
+    'arkansas',
+    'california',
+    'colorado',
+    'connecticut',
+    'delaware',
+    'district of columbia',
+    'florida',
+    'georgia',
+    'guam',
+    'hawaii',
+    'idaho',
+    'illinois',
+    'indiana',
+    'iowa',
+    'kansas',
+    'kentucky',
+    'louisiana',
+    'maine',
+    'maryland',
+    'massachusetts',
+    'michigan',
+    'minnesota',
+    'mississippi',
+    'missouri',
+    'montana',
+    'nebraska',
+    'nevada',
+    'new hampshire',
+    'new jersey',
+    'new mexico',
+    'new york',
+    'north carolina',
+    'north dakota',
+    'northern mariana islands',
+    'ohio',
+    'oklahoma',
+    'oregon',
+    'pennsylvania',
+    'puerto rico',
+    'rhode island',
+    'south carolina',
+    'south dakota',
+    'tennessee',
+    'texas',
+    'utah',
+    'vermont',
+    'virgin islands',
+    'virginia',
+    'washington',
+    'west virginia',
+    'wisconsin',
+    'wyoming'
+]
+
+value = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,
+         41,42,43,44,45,46,47,48,49,50,51,52,53,54,55]
+
+@app.route('/flightcovidHome',methods=["POST"])
+def flightcovidBack():
+    if request.method == "POST":
+        return render_template("flightAsk.html", stateNum = us_state_primaryAirport_stateNum)
+
+@app.route('/flightcovidAsk',methods=["GET", "POST"])
+def flightcovidAsk():
+    flag = 0
+    if request.method == "POST":
+        req = request.form
+        stateNum = int(req.get("stateNum"))
+        infectionRate = float(req.get("infectionRate"))
+        if stateNum in value:
+            flag = flag + 1
+        if infectionRate > 0 :
+            if flag == 1:
+                stateNum = str(stateNum)
+                infectionRate = str(infectionRate)
+                print('redirect')
+                url = "/flightcovid/" + stateNum + "-" + infectionRate
+                return redirect(url)
+    print('render_template')
+    return render_template("flightAsk.html", stateNum = us_state_primaryAirport_stateNum)
+
+@app.route('/flightcovid/<stateNum>-<infectionRate>',methods=["GET", "POST"]) # infection Rate is in range 0.5~1.5 usually
+def flightcovid(stateNum,infectionRate):
+   if request.method == "POST":
+       return render_template("flightAsk.html", stateNum = us_state_primaryAirport_stateNum)
+   if request.method == "GET":
+       print('stateNum:%s'%(stateNum))
+       stateNum = int(float(stateNum))
+       infectionRate = float(infectionRate)
+       print(infectionRate)
+       dict = mainFunction(stateNum,infectionRate)
+       print(dict)
+       return render_template("flight.html", dictKey=key[stateNum], dictValue=dict[key[stateNum]], stateNum = us_state_primaryAirport_stateNum)
+
+
 
 # App execution for dev branch
 if __name__ == '__main__':
