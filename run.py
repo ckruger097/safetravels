@@ -269,7 +269,6 @@ def vaccineAdminMetrics(state_abb):
     return vaccine_list
 
 
-<<<<<<< HEAD
 us_state_primaryAirport_stateNum = {
     'state': 'state number',
     'alabama': 0,
@@ -431,11 +430,3 @@ def flightcovid(stateNum,infectionRate):
 
 
 
-# App execution for dev branch
-if __name__ == '__main__':
-    app.run(debug=True)
-=======
-@app.route('/flightAwareAPI')
-def flightAwareAPI():
-    return None
->>>>>>> 51132202d4650c25f6912b8cfa2a6ba13d8be434
