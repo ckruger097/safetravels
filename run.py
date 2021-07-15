@@ -430,3 +430,7 @@ def flightcovid(stateNum,infectionRate):
 
 
 
+# App execution for dev branch
+if __name__ == '__main__':
+    app.run(debug=True)
+
