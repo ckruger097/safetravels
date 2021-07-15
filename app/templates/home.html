@@ -1,9 +1,9 @@
 {% extends "base.html" %}{% block title %}Safe Travels{% endblock %}
 {% block content %}
 
-<script src="jquery-1.10.2.min.js"></script>
-<script src="raphael-min.js"></script>
-<script src="kartograph.js"></script>
+<script src="../static/jquery-1.10.2.min.js"></script>
+<script src="../static/raphael-min.js"></script>
+<script src="../static/kartograph.js"></script>
 
 <script type="text/javascript">
 	$(function() {
@@ -117,7 +117,7 @@
 				
 		}
 			
-		map.loadMap('usa.svg', function() {
+		map.loadMap('../static/usa.svg', function() {
 			map.addLayer('layer0', { key: 'data-key'}, {
 				styles: {
 					stroke: '#000000',
@@ -144,7 +144,7 @@
 	<div id="map"></div>
 	Legend<br>
 	No risk Highest Risk<br>
-	<img src="legend.svg">
+	<img src="../static/legend.svg">
 
 
 {% endblock %}

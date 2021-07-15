@@ -270,3 +270,6 @@ def vaccineAdminMetrics(state_abb):
 @app.route('/flightAwareAPI')
 def flightAwareAPI():
     return None
+# App execution for dev branch
+if __name__ == '__main__':
+    app.run(debug=True)
