@@ -1,5 +1,6 @@
 import requests
 from datetime import timedelta, datetime
+import json
 
 us_state_abbrev_full = {
     'AL':'alabama',
@@ -298,12 +299,14 @@ us_state_numberOfHighRiskFlight = {
 }
 
 
-def getResult(airport,url,question=''): # Get Result is used in every function below, link with URL to get API information and output
+def getResult(airport,theHighRiskInfectionRate,url,question=''): # Get Result is used in every function below, link with URL to get API information and output
     r = requests.get('http://yliu57:5cd56d79d2ce3ff9ef8351a84aefbe3479ebf0c5@flightxml.flightaware.com/json/FlightXML2/SetMaximumResultSize?max_size=1000')
     r = requests.get(url)
     r = r.json()
-    b = len(r['ArrivedResult']['arrivals'])
+    # b = len(r['ArrivedResult']['arrivals'])
     # print('total number of flights: %d\n'%(b))
+    
+    # Count the number of flights flying into the state from other states
     c = 0 # number of flights of primary airports
     for flight in r['ArrivedResult']['arrivals']:
         icao = flight['origin']
@@ -313,6 +316,8 @@ def getResult(airport,url,question=''): # Get Result is used in every function b
                 c+=1;
     # print('us_state_countFlyingInToArrival: %s\n'%(us_state_countFlyingInToArrival))
     # print('total number of flights of primary airport: %d\n'%(c))
+    
+    
     # 1.Determine the high-risk places(write 0(Not high-risk) or 1(high-risk) in us_state_placesRiskOrNot) 
     urlCovidAPIKey = "apiKey=ad85ef1a0e9b4ad4aecc0ffe0792549e"
     urlCovid = "https://api.covidactnow.org/v2/states.timeseries.json?" + urlCovidAPIKey
@@ -325,7 +330,7 @@ def getResult(airport,url,question=''): # Get Result is used in every function b
     theDayBeforeYesterday = datetime.today() + timedelta(-2)
     theDayBeforeYesterday = theDayBeforeYesterday.strftime('%Y-%m-%d')
 
-    theHighRiskInfectionRate = 1.2   # The appropriate bound of high-risk or not is not determined. 1.2? 1.0? 1.3? 1.4?
+    # theHighRiskInfectionRate = 1.2   # The theHighRiskInfectionRate is changed to be designed by the user
     
     for state1 in covid:
         state1Break = 0
@@ -374,76 +379,33 @@ def getResult(airport,url,question=''): # Get Result is used in every function b
 
     # print('Output of GET %s request:\n%s' %(question, r)) # r stores the API information
 
-def FlightInfoEx(ident,howMany=1000,offset=0):
-    question = 'FlightInfoEx?'
-    url = 'http://yliu57:5cd56d79d2ce3ff9ef8351a84aefbe3479ebf0c5@flightxml.flightaware.com/json/FlightXML2/' + question
-    if ident != None:
-        url += 'ident='+ ident 
-    if howMany != None:
-        if ident != None:
-            url += '&'
-        url += 'howMany='+ ('%s'%(howMany))
-    if offset != None:
-        if ident != None or howMany != None :
-            url += '&'
-        url += 'offset='+  ('%s'%(offset))
-    getResult(url,question)
 
-# Example:
-# FlightInfoEx('UAL2507',15,0)
-# FlightInfoEx('UAL2507')
-
-
-def Arrived(airport, howMany=1000, filter='', offset=0):
+def Arrived(airport, theHighRiskInfectionRate = 1.2):
     question = 'Arrived?'
     url = 'http://yliu57:5cd56d79d2ce3ff9ef8351a84aefbe3479ebf0c5@flightxml.flightaware.com/json/FlightXML2/' + question
     if airport != None:
         url += 'airport='+ airport
-    if howMany != None:
-        if airport != None:
-            url += '&'
-        url += 'howMany='+ ('%s'%(howMany))
-    if filter != None:
-        if airport != None or howMany != None:
-            url += '&'
-        url += 'filter='+ ('%s'%(filter))
-    if offset != None:
-        if airport != None or howMany != None or filter != None:
-            url += '&'
-        url += 'offset='+ ('%s'%(offset))
-    getResult(airport,url,question)
+    getResult(airport,theHighRiskInfectionRate,url,question)
 
 # Example:
 # Arrived('KIAD')
 # Arrived('KIAD',5,'airline',0)
-def mainFunction():
+def mainFunction(index,theHighRiskInfectionRate = 1.2):  # default theHighRiskInfectionRate is 1.2
+    for key in us_state_numberOfHighRiskFlight:     # refresh the dictionary for the next use
+        us_state_numberOfHighRiskFlight[key] = 0
+    indexLoop = -1
+    dictReturn = {}
     for state in us_state_primaryAirport:
-        for airport in us_state_primaryAirport[state]:
-            Arrived(airport)
-    print('us_state_numberOfHighRiskFlight: %s\n'%(us_state_numberOfHighRiskFlight))
-
-mainFunction()
-
-def Departed(airport, howMany=1, filter='', offset=0):
-    question = 'Departed?'
-    url = 'http://yliu57:5cd56d79d2ce3ff9ef8351a84aefbe3479ebf0c5@flightxml.flightaware.com/json/FlightXML2/' + question
-    if airport != None:
-        url += 'airport='+ airport
-    if howMany != None:
-        if airport != None:
-            url += '&'
-        url += 'howMany='+ ('%s'%(howMany))
-    if filter != None:
-        if airport != None or howMany != None:
-            url += '&'
-        url += 'filter='+ ('%s'%(filter))
-    if offset != None:
-        if airport != None or howMany != None or filter != None:
-            url += '&'
-        url += 'offset='+ ('%s'%(offset))
-    getResult(url,question)
-
-
-# Example:
-# Departed('KIAD',5)
-# Departed('KIAD',5,'airline',0)
+        indexLoop +=1
+        if indexLoop == index+1:
+            break
+        if  indexLoop == index:
+            for airport in us_state_primaryAirport[state]:
+               Arrived(airport,theHighRiskInfectionRate)
+            dictReturn[state] = us_state_numberOfHighRiskFlight[state]
+    # Arrived('KIAD')
+    # print('us_state_numberOfHighRiskFlight: %s\n'%(us_state_numberOfHighRiskFlight))
+    print('dictReturn: %s\n'%(dictReturn))
+    # j = json.dumps(dictReturn)
+    # return j
+    return dictReturn
