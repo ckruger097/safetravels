@@ -1,0 +1,13 @@
+<svg width="500" height="150" viewBox="0 0 500 150"
+  	xmlns="http://www.w3.org/2000/svg"
+  	xmlns:xlink="http://www.w3.org/1999/xlink">
+	<defs>
+		<linearGradient id="opacityGradient">
+			<stop offset="0%" style="stop-color: #18ba43; stop-opacity: 0.0"/>
+			<stop offset="95%" style="stop-color: #18ba43; stop-opacity: 1.0"/>
+		</linearGradient>
+	</defs>
+	
+	<rect x="10" y="10" width="450" height="15"
+		style="fill: url(#opacityGradient); stroke: black"/>
+</svg>
