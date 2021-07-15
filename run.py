@@ -131,9 +131,6 @@ def compare2(state1, state2):
             deaths2 = doc.get('actuals').get('deaths')
             break
 
-    print(deaths1)
-    print(deaths2)
-
     return render_template("results.html",
         headings=headings,
         dates1=dates1,
