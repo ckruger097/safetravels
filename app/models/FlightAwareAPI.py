@@ -307,13 +307,12 @@ def getResult(airport,theHighRiskInfectionRate,url,question=''): # Get Result is
     # print('total number of flights: %d\n'%(b))
     
     # Count the number of flights flying into the state from other states
-    c = 0 # number of flights of primary airports
     for flight in r['ArrivedResult']['arrivals']:
         icao = flight['origin']
         for key in us_state_primaryAirport:
             if icao in us_state_primaryAirport[key]:
                 us_state_countFlyingInToArrival[key] = us_state_countFlyingInToArrival[key]+1;
-                c+=1;
+                break;
     # print('us_state_countFlyingInToArrival: %s\n'%(us_state_countFlyingInToArrival))
     # print('total number of flights of primary airport: %d\n'%(c))
     
@@ -374,9 +373,6 @@ def getResult(airport,theHighRiskInfectionRate,url,question=''): # Get Result is
     # FINAL DICTIONARY HERE
     # print('us_state_numberOfHighRiskFlight: %s\n'%(us_state_numberOfHighRiskFlight)) 
 
-    for key in us_state_countFlyingInToArrival:     # refresh the dictionary for the next use
-        us_state_countFlyingInToArrival[key] = 0
-
     # print('Output of GET %s request:\n%s' %(question, r)) # r stores the API information
 
 
@@ -408,4 +404,10 @@ def mainFunction(index,theHighRiskInfectionRate = 1.2):  # default theHighRiskIn
     print('dictReturn: %s\n'%(dictReturn))
     # j = json.dumps(dictReturn)
     # return j
+    for key in us_state_countFlyingInToArrival:     # refresh the dictionary for the next use
+        us_state_countFlyingInToArrival[key] = 0
+    for key in us_state_placesRiskOrNot:     # refresh the dictionary for the next use
+        us_state_placesRiskOrNot[key] = 0
+    for key in us_state_numberOfHighRiskFlight:     # refresh the dictionary for the next use
+        us_state_numberOfHighRiskFlight[key] = 0
     return dictReturn

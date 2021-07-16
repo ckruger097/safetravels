@@ -128,8 +128,9 @@ th, td {
 
 .head2 {
     color: rgb(212, 224, 224);
-    margin-bottom: 70px;
-    font-size: 45px;
+    margin-top: 35px;
+    margin-bottom: 30px;
+    font-size: 30px;
     letter-spacing: 2px;
     text-align: center;
 }

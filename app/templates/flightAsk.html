@@ -74,15 +74,16 @@
                 <div class="card" id="card-2">
                     <div class="search-bar">
                         <form action="/flightcovidAsk" method="POST">
-                            <h1 class="head1">Enter the state number and the high-risk infectionRate upper limit(0.5 ~ 1.5 usually) you think</h1>
+                            <h1 class="head1">Enter the state number and the high-risk infectionRate upper limit(1.0 ~ 1.5 usually) you think</h1>
                             <div class="form-box">
                                 <input type="text" class="search-field state1"
-                                       placeholder="The state number" name="stateNum" type="stateNum">
+                                       placeholder="The state number, 0~55" name="stateNum" type="stateNum">
                             </div>
                             <div class="form-box">
                                 <input type="text" class="search-field state2"
-                                       placeholder="The high-risk infectionRate boundary" name="infectionRate" type="infectionRate">
+                                       placeholder="The high-risk infectionRate upper limit, 1.0~1.5" name="infectionRate" type="infectionRate">
                             </div>
+                            <h2 class="head2">The search always takes 15 - 20 seconds, please wait a while</h2>
                             <div class="form-box">
                                 <button class="search-btn" type="submit">Search</button>
                             </div>
