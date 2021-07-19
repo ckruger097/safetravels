@@ -35,7 +35,6 @@ def connect_mongo():
     db_client = pymongo.MongoClient(
         f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@cluster0-shard-00-00.kxem4.mongodb.net:27017,cluster0-shard-00-01.kxem4.mongodb.net:27017,cluster0-shard-00-02.kxem4.mongodb.net:27017/safetravels?ssl=true&replicaSet=atlas-5u7slz-shard-0&authSource=admin&retryWrites=true&w=majority")
     db = db_client.safetravels
-    print(db)
     return db
 
 
@@ -190,17 +189,15 @@ def state(state, abbrev):
 us_state_abbrev = {
     'alabama': 'al',
     'alaska': 'ak',
-    'american samoa': 'as',
     'arizona': 'az',
     'arkansas': 'ar',
     'california': 'ca',
     'colorado': 'co',
     'connecticut': 'ct',
     'delaware': 'de',
-    'district of columbia': 'dc',
+    #'district of columbia': 'dc',
     'florida': 'fl',
     'georgia': 'ga',
-    'guam': 'gu',
     'hawaii': 'hi',
     'idaho': 'id',
     'illinois': 'il',
@@ -225,7 +222,6 @@ us_state_abbrev = {
     'new york': 'ny',
     'north carolina': 'nc',
     'north dakota': 'nd',
-    'northern mariana islands': 'mp',
     'ohio': 'oh',
     'oklahoma': 'ok',
     'oregon': 'or',
@@ -238,7 +234,6 @@ us_state_abbrev = {
     'texas': 'tx',
     'utah': 'ut',
     'vermont': 'vt',
-    'virgin islands': 'vi',
     'virginia': 'va',
     'washington': 'wa',
     'west virginia': 'wv',
