@@ -118,7 +118,27 @@ th, td {
     font-family: sans-serif;
 }
 
+.search-bar1 {
+    height: 200vh;
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+}
+
 .head1 {
+    color: rgb(212, 224, 224);    
+    margin-bottom: 70px;
+    margin-left: 50px;
+    margin-right: 50px;
+    font-size: 45px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.head4 {
     color: rgb(212, 224, 224);
     margin-bottom: 70px;
     font-size: 45px;
@@ -126,7 +146,33 @@ th, td {
     text-align: center;
 }
 
+.head5 {
+    color: rgb(212, 224, 224);
+    margin-top: 50px;
+    margin-bottom: 70px;
+    font-size: 30px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.head6 {
+    margin-top: 50px;
+    color: rgb(212, 224, 224);
+    font-size: 20px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
 .head2 {
+    color: rgb(212, 224, 224);
+    margin-top: 100px;
+    margin-bottom: 100px;
+    font-size: 30px;
+    letter-spacing: 2px;
+    text-align: center;
+}
+
+.head3 {
     color: rgb(212, 224, 224);
     margin-top: 35px;
     margin-bottom: 30px;
