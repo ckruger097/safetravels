@@ -425,8 +425,3 @@ def flightcovid(stateNum,infectionRate):
        dict = mainFunction(stateNum,infectionRate)
        print(dict)
        return render_template("flight.html", dictKey=key[stateNum], dictValue=dict[key[stateNum]], stateNum = us_state_primaryAirport_stateNum)
-
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
