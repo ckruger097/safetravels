@@ -1,6 +1,12 @@
 {
   "ExpandedNodes": [
-    ""
+    "",
+    "\\app",
+    "\\app\\models",
+    "\\app\\static",
+    "\\app\\static\\css",
+    "\\app\\templates"
   ],
+  "SelectedNode": "\\app\\models\\FlightAwareAPI.py",
   "PreviewInSolutionExplorer": false
 }

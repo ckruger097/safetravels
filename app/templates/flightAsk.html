@@ -60,7 +60,7 @@
             <div class="dashboard-card">
                 <div class="card" id="card-1">
                     <div class="chart-forStateNum">
-                        <h1 class="head1">The state number checklist</h1>
+                        <h1 class="head4">The state number checklist</h1>
                         <table class="tabular">
                             {% for key, value in stateNum.items() %}
                             <tr>
@@ -72,7 +72,7 @@
                     </div>
                 </div>               
                 <div class="card" id="card-2">
-                    <div class="search-bar">
+                    <div class="search-bar1">
                         <form action="/flightcovidAsk" method="POST">
                             <h1 class="head1">Enter the state number and the high-risk infectionRate upper limit(1.0 ~ 1.5 usually) you think</h1>
                             <div class="form-box">
@@ -87,20 +87,14 @@
                             <div class="form-box">
                                 <button class="search-btn" type="submit">Search</button>
                             </div>
+                            <h1 class="head5">How does the search works?</h1>
+                            <h1 class="head6">After you enter the state A number and the infection rate upper limit which is dangerous you think, the programme will calculate all the high-risk flight flying into state A.</h1>
+                            <h1 class="head6">The meaning of high-risk flight is the flight flying from all the other state whose infection rate is upper than the limit you set.</h1>
+                            <h1 class="head6">There are over 5,000 airports in the United States. We finally choose to caculate 396 primary airports in the United State. </h1>
+                            <h1 class="head6">To get more details about the primary airports, please click this website link: </h1>
+                            <a class="head6" href="https://en.wikipedia.org/wiki/List_of_airports_in_the_United_States"> https://en.wikipedia.org/wiki/List_of_airports_in_the_United_States </a>
                         </form>
-                    </div>
-                    <div class="chart-canvas">
-                        <table class="tabular">
-                            <tr>
-                                <th>The state you are searching</th>
-                                <th>The number of high-risk flight flying into this state recently</th>
-                            </tr>
-                            <tr>
-                                <td>?</td>
-                                <td>?</td>
-                            </tr>
-                        </table>
-                    </div>
+                    </div>                  
                 </div>
             </div>
         </div>
