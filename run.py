@@ -94,6 +94,7 @@ def us_page():
                 return redirect(f"/compare/{state1}-{state2}")
     return render_template("compare.html")
 
+
 @app.route("/compare/<state1>-<state2>")
 def compare2(state1, state2):
     db = connect_mongo()
@@ -103,7 +104,6 @@ def compare2(state1, state2):
 
     abbrev1 = us_state_abbrev.get(state1).upper()
     abbrev2 = us_state_abbrev.get(state2).upper()
-
 
     vaccine_list1 = vaccineAdminMetrics(abbrev1)
     vaccine_list2 = vaccineAdminMetrics(abbrev2)
@@ -132,18 +132,19 @@ def compare2(state1, state2):
             break
 
     return render_template("results.html",
-        headings=headings,
-        dates1=dates1,
-        dates2=dates2,
-        vaccine_metrics1=vaccine_metrics1,
-        vaccine_metrics2=vaccine_metrics2,
-        infection_rate1=infection_rate1,
-        infection_rate2=infection_rate2,
-        state1=state1,
-        state2=state2,
-        deaths1=deaths1,
-        deaths2=deaths2,
-        )
+                           headings=headings,
+                           dates1=dates1,
+                           dates2=dates2,
+                           vaccine_metrics1=vaccine_metrics1,
+                           vaccine_metrics2=vaccine_metrics2,
+                           infection_rate1=infection_rate1,
+                           infection_rate2=infection_rate2,
+                           state1=state1,
+                           state2=state2,
+                           deaths1=deaths1,
+                           deaths2=deaths2,
+                           )
+
 
 @app.route("/us/<state>-<abbrev>")
 def state(state, abbrev):
@@ -174,16 +175,16 @@ def state(state, abbrev):
             break
 
     return render_template("state.html",
-        in_state=in_state,
-        in_abbrev=in_abbrev,
-        case_numbers=case_numbers,
-        headings=headings,
-        deaths=deaths,
-        vaccine=vaccine,
-        dates=json.dumps(dates),
-        vaccine_metrics=json.dumps(vaccine_metrics),
-        infection_rate=json.dumps(infection_rate)
-        )
+                           in_state=in_state,
+                           in_abbrev=in_abbrev,
+                           case_numbers=case_numbers,
+                           headings=headings,
+                           deaths=deaths,
+                           vaccine=vaccine,
+                           dates=json.dumps(dates),
+                           vaccine_metrics=json.dumps(vaccine_metrics),
+                           infection_rate=json.dumps(infection_rate)
+                           )
 
 
 us_state_abbrev = {
@@ -195,7 +196,7 @@ us_state_abbrev = {
     'colorado': 'co',
     'connecticut': 'ct',
     'delaware': 'de',
-    #'district of columbia': 'dc',
+    # 'district of columbia': 'dc',
     'florida': 'fl',
     'georgia': 'ga',
     'hawaii': 'hi',
@@ -241,6 +242,7 @@ us_state_abbrev = {
     'wyoming': 'wy'
 }
 
+
 def vaccineAdminMetrics(state_abb):
     db = connect_mongo()
     collection = db['new-state-list']
@@ -256,7 +258,7 @@ def vaccineAdminMetrics(state_abb):
                         num = Decimal(metric[i].get('vaccinationsCompletedRatio'))
                         num = num * 100
                         line = (f"{metric[i].get('date')}", f"{str(num)}",
-                        f"{metric[i].get('infectionRate')}")
+                                f"{metric[i].get('infectionRate')}")
                         vaccine_list.append(line)
             break
     return vaccine_list
@@ -322,7 +324,7 @@ us_state_primaryAirport_stateNum = {
     'wyoming': 55,
 }
 
-key =[
+key = [
     'alabama',
     'alaska',
     'american samoa',
@@ -381,15 +383,18 @@ key =[
     'wyoming'
 ]
 
-value = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,
-         41,42,43,44,45,46,47,48,49,50,51,52,53,54,55]
+value = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29,
+         30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40,
+         41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, 52, 53, 54, 55]
 
-@app.route('/flightcovidHome',methods=["POST"])
+
+@app.route('/flightcovidHome', methods=["POST"])
 def flightcovidBack():
     if request.method == "POST":
-        return render_template("flightAsk.html", stateNum = us_state_primaryAirport_stateNum)
+        return render_template("flightAsk.html", stateNum=us_state_primaryAirport_stateNum)
 
-@app.route('/flightcovidAsk',methods=["GET", "POST"])
+
+@app.route('/flightcovidAsk', methods=["GET", "POST"])
 def flightcovidAsk():
     flag = 0
     if request.method == "POST":
@@ -398,7 +403,7 @@ def flightcovidAsk():
         infectionRate = float(req.get("infectionRate"))
         if stateNum in value:
             flag = flag + 1
-        if infectionRate > 0 :
+        if infectionRate > 0:
             if flag == 1:
                 stateNum = str(stateNum)
                 infectionRate = str(infectionRate)
@@ -406,17 +411,20 @@ def flightcovidAsk():
                 url = "/flightcovid/" + stateNum + "-" + infectionRate
                 return redirect(url)
     print('render_template')
-    return render_template("flightAsk.html", stateNum = us_state_primaryAirport_stateNum)
+    return render_template("flightAsk.html", stateNum=us_state_primaryAirport_stateNum)
 
-@app.route('/flightcovid/<stateNum>-<infectionRate>',methods=["GET", "POST"]) # infection Rate is in range 0.5~1.5 usually
-def flightcovid(stateNum,infectionRate):
-   if request.method == "POST":
-       return render_template("flightAsk.html", stateNum = us_state_primaryAirport_stateNum)
-   if request.method == "GET":
-       print('stateNum:%s'%(stateNum))
-       stateNum = int(float(stateNum))
-       infectionRate = float(infectionRate)
-       print(infectionRate)
-       dict = mainFunction(stateNum,infectionRate)
-       print(dict)
-       return render_template("flight.html", dictKey=key[stateNum], dictValue=dict[key[stateNum]], stateNum = us_state_primaryAirport_stateNum)
+
+@app.route('/flightcovid/<stateNum>-<infectionRate>',
+           methods=["GET", "POST"])  # infection Rate is in range 0.5~1.5 usually
+def flightcovid(stateNum, infectionRate):
+    if request.method == "POST":
+        return render_template("flightAsk.html", stateNum=us_state_primaryAirport_stateNum)
+    if request.method == "GET":
+        print('stateNum:%s' % (stateNum))
+        stateNum = int(float(stateNum))
+        infectionRate = float(infectionRate)
+        print(infectionRate)
+        dict = mainFunction(stateNum, infectionRate)
+        print(dict)
+        return render_template("flight.html", dictKey=key[stateNum], dictValue=dict[key[stateNum]],
+                               stateNum=us_state_primaryAirport_stateNum)
