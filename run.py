@@ -35,6 +35,7 @@ def connect_mongo():
     db_client = pymongo.MongoClient(
         f"mongodb://{MONGO_USER}:{MONGO_PASSWORD}@cluster0-shard-00-00.kxem4.mongodb.net:27017,cluster0-shard-00-01.kxem4.mongodb.net:27017,cluster0-shard-00-02.kxem4.mongodb.net:27017/safetravels?ssl=true&replicaSet=atlas-5u7slz-shard-0&authSource=admin&retryWrites=true&w=majority")
     db = db_client.safetravels
+    print(db)
     return db
 
 
@@ -427,3 +428,5 @@ def flightcovid(stateNum,infectionRate):
 
 
 
+if __name__ == '__main__':
+    app.run(debug=True)
